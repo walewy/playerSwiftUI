@@ -11,6 +11,12 @@
 		633D1BC72BB02B85005474A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 633D1BC62BB02B85005474A4 /* Assets.xcassets */; };
 		633D1BCA2BB02B85005474A4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 633D1BC92BB02B85005474A4 /* Preview Assets.xcassets */; };
 		633D1BD92BB037A2005474A4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BD82BB037A2005474A4 /* ContentView.swift */; };
+		633D1BDD2BB0B5C0005474A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BDC2BB0B5C0005474A4 /* AppDelegate.swift */; };
+		633D1BDF2BB0B624005474A4 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BDE2BB0B624005474A4 /* VideoPlayerViewModel.swift */; };
+		633D1BE12BB0B7C8005474A4 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BE02BB0B7C8005474A4 /* Controls.swift */; };
+		633D1BE32BB0BACB005474A4 /* CustomProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BE22BB0BACB005474A4 /* CustomProgressBar.swift */; };
+		633D1BE52BB0BB63005474A4 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BE42BB0BB63005474A4 /* VideoPlayer.swift */; };
+		633D1BE72BB0BD95005474A4 /* FullScreenPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D1BE62BB0BD95005474A4 /* FullScreenPlayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +25,12 @@
 		633D1BC62BB02B85005474A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		633D1BC92BB02B85005474A4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		633D1BD82BB037A2005474A4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		633D1BDC2BB0B5C0005474A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		633D1BDE2BB0B624005474A4 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
+		633D1BE02BB0B7C8005474A4 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		633D1BE22BB0BACB005474A4 /* CustomProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProgressBar.swift; sourceTree = "<group>"; };
+		633D1BE42BB0BB63005474A4 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		633D1BE62BB0BD95005474A4 /* FullScreenPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +67,12 @@
 				633D1BD82BB037A2005474A4 /* ContentView.swift */,
 				633D1BC62BB02B85005474A4 /* Assets.xcassets */,
 				633D1BC82BB02B85005474A4 /* Preview Content */,
+				633D1BDC2BB0B5C0005474A4 /* AppDelegate.swift */,
+				633D1BDE2BB0B624005474A4 /* VideoPlayerViewModel.swift */,
+				633D1BE02BB0B7C8005474A4 /* Controls.swift */,
+				633D1BE22BB0BACB005474A4 /* CustomProgressBar.swift */,
+				633D1BE42BB0BB63005474A4 /* VideoPlayer.swift */,
+				633D1BE62BB0BD95005474A4 /* FullScreenPlayer.swift */,
 			);
 			path = PlayerSwiftUI;
 			sourceTree = "<group>";
@@ -137,8 +155,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				633D1BE52BB0BB63005474A4 /* VideoPlayer.swift in Sources */,
+				633D1BE72BB0BD95005474A4 /* FullScreenPlayer.swift in Sources */,
 				633D1BD92BB037A2005474A4 /* ContentView.swift in Sources */,
+				633D1BE32BB0BACB005474A4 /* CustomProgressBar.swift in Sources */,
+				633D1BDF2BB0B624005474A4 /* VideoPlayerViewModel.swift in Sources */,
 				633D1BC32BB02B84005474A4 /* PlayerSwiftUIApp.swift in Sources */,
+				633D1BE12BB0B7C8005474A4 /* Controls.swift in Sources */,
+				633D1BDD2BB0B5C0005474A4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
