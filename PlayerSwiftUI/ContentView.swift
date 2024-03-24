@@ -14,6 +14,7 @@ struct ContentView: View {
     @State var player = AVPlayer(url: URL(string: "https://mem-tube.ru/web/loads/video/NOOOOOOOOOOOO.mp4")!)
     @State var isPlaying = false
     @State var showControls = false
+    @State var value: Float = 0
     
     var body: some View {
         VStack {
@@ -22,7 +23,7 @@ struct ContentView: View {
                 VideoPlayer(player: $player)
                 
                 if self.showControls {
-                    Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls)
+                    Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value)
                 }
                 
             }
@@ -46,13 +47,15 @@ struct Controls: View {
     @Binding var player: AVPlayer
     @Binding var isPlaying: Bool
     @Binding var pannel: Bool
-    @State var value: Float = 0
+    @Binding var value: Float
     
     var body: some View {
         VStack{
             Spacer()
             HStack{
                 Button {
+                    
+                    self.player.seek(to: CMTime(seconds: self.getSeconds() - 10, preferredTimescale: 1))
                     
                 } label: {
                     Image(systemName: "backward.fill")
@@ -79,7 +82,7 @@ struct Controls: View {
                 Spacer()
                 Button {
                     
-                    self.player.seek(to: CMTime(seconds: getSeconds() + 10, preferredTimescale: <#T##CMTimeScale#>))
+                    self.player.seek(to: CMTime(seconds: self.getSeconds() + 10, preferredTimescale: 1))
                     
                 } label: {
                     Image(systemName: "forward.fill")
