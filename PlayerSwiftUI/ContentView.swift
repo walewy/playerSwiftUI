@@ -15,6 +15,7 @@ struct ContentView: View {
     @State var isPlaying = false
     @State var showControls = false
     @State var value: Float = 0
+    @State var isFullscreen = false
     
     var body: some View {
         GeometryReader{ geo in
@@ -23,11 +24,12 @@ struct ContentView: View {
                     VideoPlayer(player: $player)
                     
                     if self.showControls {
-                        Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value)
+                        Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullscreen: self.$isFullscreen)
                     }
                     
                 }
-                .frame(height: UIDevice.current.orientation.isLandscape ? geo.size.height : geo.size.height / 3)
+                .frame(height: self.isFullscreen ? geo.size.height : (UIDevice.current.orientation.isLandscape ? geo.size.height : geo.size.height / 3))
+//                .frame(height: UIDevice.current.orientation.isLandscape ? geo.size.height : geo.size.height / 3)
                 .onTapGesture {
                     self.showControls = true
                 }
@@ -39,6 +41,11 @@ struct ContentView: View {
                 self.player.play()
                 self.isPlaying = true
             }
+            .gesture(DragGesture().onEnded({ gesture in
+                if abs(gesture.translation.width) > 100 {
+                    self.isFullscreen.toggle()
+                }
+            }))
         }
     }
 }
@@ -49,9 +56,21 @@ struct Controls: View {
     @Binding var isPlaying: Bool
     @Binding var pannel: Bool
     @Binding var value: Float
+    @Binding var isFullscreen: Bool
     
     var body: some View {
         VStack{
+            HStack {
+                Button {
+                    isFullscreen.toggle()
+                } label: {
+                    Image(systemName: isFullscreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
+                        .font(.title)
+                        .foregroundStyle(.white)
+                        .padding(20)
+                }
+                Spacer()
+            }
             Spacer()
             HStack{
                 Button {
@@ -92,7 +111,6 @@ struct Controls: View {
                         .padding(20)
                 }
             }
-            
             Spacer()
             
             CustomProgressBar(value: self.$value, player: self.$player, isPlaying: self.$isPlaying)
@@ -122,6 +140,8 @@ struct Controls: View {
         return Double(Double(self.value) * (self.player.currentItem?.duration.seconds)!)
     }
 }
+
+
 
 struct CustomProgressBar: UIViewRepresentable{
     func makeCoordinator() -> Coordinator {
