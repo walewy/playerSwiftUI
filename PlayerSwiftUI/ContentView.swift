@@ -46,6 +46,7 @@ struct Controls: View {
     @Binding var player: AVPlayer
     @Binding var isPlaying: Bool
     @Binding var pannel: Bool
+    @State var value: Float = 0
     
     var body: some View {
         VStack{
@@ -78,6 +79,8 @@ struct Controls: View {
                 Spacer()
                 Button {
                     
+                    self.player.seek(to: CMTime(seconds: getSeconds() + 10, preferredTimescale: <#T##CMTimeScale#>))
+                    
                 } label: {
                     Image(systemName: "forward.fill")
                         .font(.title)
@@ -88,11 +91,76 @@ struct Controls: View {
             
             Spacer()
             
+            CustomProgressBar(value: self.$value, player: self.$player, isPlaying: self.$isPlaying)
+            
         }
         .padding()
         .background(Color.black.opacity(0.4))
         .onTapGesture {
             self.pannel = false
+        }
+        .onAppear {
+            self.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { (_) in
+                self.value = self.getSliderValue()
+            }
+        }
+    }
+    
+    func getSliderValue() -> Float {
+        return Float(self.player.currentTime().seconds / (self.player.currentItem?.duration.seconds)!)
+    }
+    
+    func getSeconds() -> Double {
+        return Double(Double(self.value) * (self.player.currentItem?.duration.seconds)!)
+    }
+}
+
+struct CustomProgressBar: UIViewRepresentable{
+    func makeCoordinator() -> Coordinator {
+        return CustomProgressBar.Coordinator(parent1: self)
+    }
+    
+    
+    @Binding var value: Float
+    @Binding var player: AVPlayer
+    @Binding var isPlaying: Bool
+    
+    func makeUIView(context: Context) -> UISlider {
+        let slider = UISlider()
+        slider.minimumTrackTintColor = .red
+        slider.maximumTrackTintColor  = .gray
+        slider.setThumbImage(UIImage(named: "thumb"), for: .normal)
+        slider.value = value
+        slider.addTarget(context.coordinator, action: #selector(context.coordinator.changed(slider:)), for: .valueChanged)
+        return slider
+    }
+    
+    func updateUIView(_ uiView: UISlider, context: Context) {
+        uiView.value = value
+    }
+    
+    class Coordinator: NSObject {
+        var parent: CustomProgressBar
+        init(parent1: CustomProgressBar) {
+            parent = parent1
+        }
+        
+        @objc func changed(slider: UISlider) {
+            if slider.isTracking {
+                parent.player.pause()
+                let sec = Double(slider.value * Float((parent.player.currentItem?.duration.seconds)!))
+                
+                parent.player.seek(to: CMTime(seconds: sec, preferredTimescale: 1))
+                
+            } else {
+                let sec = Double(slider.value * Float((parent.player.currentItem?.duration.seconds)!))
+                
+                parent.player.seek(to: CMTime(seconds: sec, preferredTimescale: 1))
+                
+                if parent.isPlaying {
+                    parent.player.play()
+                }
+            }
         }
     }
 }
