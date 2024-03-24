@@ -22,6 +22,7 @@ struct CustomProgressBar: UIViewRepresentable{
         slider.minimumTrackTintColor = .red
         slider.maximumTrackTintColor  = .gray
         slider.setThumbImage(UIImage(named: "thumb"), for: .normal)
+        slider.thumbTintColor = .red
         slider.value = viewModel.value
         slider.addTarget(context.coordinator, action: #selector(context.coordinator.changed(slider:)), for: .valueChanged)
         return slider

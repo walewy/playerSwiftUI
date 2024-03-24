@@ -14,6 +14,8 @@ struct MainView: View {
     @StateObject var viewModel = VideoPlayerViewModel()
     
     var body: some View {
-        VideoPlayer(viewModel: viewModel)
+        VStack {
+            VideoPlayerView(viewModel: viewModel)
+        }
     }
 }
