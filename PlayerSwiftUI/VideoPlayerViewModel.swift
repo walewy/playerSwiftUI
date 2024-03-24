@@ -25,24 +25,4 @@ class VideoPlayerViewModel: ObservableObject {
         player.pause()
         isPlaying = false
     }
-    
-    func seek(to time: Double) {
-        let cmTime = CMTime(seconds: time, preferredTimescale: 1)
-        player.seek(to: cmTime)
-    }
-    
-    func getCurrentTime() -> Double {
-        return player.currentTime().seconds
-    }
-    
-    func getDuration() -> Double? {
-        return player.currentItem?.duration.seconds
-    }
-    
-    func calculateSliderValue() -> Float {
-        guard let duration = getDuration(), duration > 0 else {
-            return 0
-        }
-        return Float(getCurrentTime() / duration)
-    }
 }

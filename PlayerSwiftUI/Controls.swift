@@ -20,7 +20,7 @@ struct Controls: View {
                     // Тогглим полноэкранный режим
                     viewModel.isFullScreen.toggle()
                 }) {
-                    Image(systemName: viewModel.isFullScreen ? "arrow.down.left.and.arrow.up.right" : "arrow.up.left.and.arrow.down.right") // Меняем иконку кнопки в зависимости от режима
+                    Image(systemName: viewModel.isFullScreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
                         .font(.title)
                         .foregroundColor(.white)
                         .padding(20)
@@ -42,10 +42,10 @@ struct Controls: View {
                 Spacer()
                 Button {
                     if viewModel.isPlaying {
-                        viewModel.player.pause()
+                        viewModel.pause()
                         viewModel.isPlaying = false
                     } else {
-                        viewModel.player.play()
+                        viewModel.play()
                         viewModel.isPlaying = true
                     }
                     
