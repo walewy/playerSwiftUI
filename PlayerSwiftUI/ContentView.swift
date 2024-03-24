@@ -11,33 +11,34 @@ import AVKit
 
 struct ContentView: View {
     
-    @State var player = AVPlayer(url: URL(string: "https://mem-tube.ru/web/loads/video/NOOOOOOOOOOOO.mp4")!)
+    @State var player = AVPlayer(url: URL(string: "https://filmoment.ru/web/loads/video/beekeeper.mp4")!)
     @State var isPlaying = false
     @State var showControls = false
     @State var value: Float = 0
     
     var body: some View {
-        VStack {
-            
-            ZStack{
-                VideoPlayer(player: $player)
-                
-                if self.showControls {
-                    Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value)
+        GeometryReader{ geo in
+            VStack {
+                ZStack{
+                    VideoPlayer(player: $player)
+                    
+                    if self.showControls {
+                        Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value)
+                    }
+                    
+                }
+                .frame(height: UIDevice.current.orientation.isLandscape ? geo.size.height : geo.size.height / 3)
+                .onTapGesture {
+                    self.showControls = true
                 }
                 
+                Spacer()
             }
-            .frame(height: UIScreen.main.bounds.height / 3.5)
-            .onTapGesture {
-                self.showControls = true
+            .background(Color.black.edgesIgnoringSafeArea(.all))
+            .onAppear {
+                self.player.play()
+                self.isPlaying = true
             }
-            
-            Spacer()
-        }
-        .background(Color.black.edgesIgnoringSafeArea(.all))
-        .onAppear {
-            self.player.play()
-            self.isPlaying = true
         }
     }
 }
@@ -105,6 +106,10 @@ struct Controls: View {
         .onAppear {
             self.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { (_) in
                 self.value = self.getSliderValue()
+                
+                if self.value == 1.0 {
+                    self.isPlaying = false
+                }
             }
         }
     }
