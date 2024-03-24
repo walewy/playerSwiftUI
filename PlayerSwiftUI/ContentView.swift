@@ -9,6 +9,15 @@ import Foundation
 import SwiftUI
 import AVKit
 
+class AppDelegate: NSObject, UIApplicationDelegate {
+    
+    static var orientationLock = UIInterfaceOrientationMask.portrait //By default you want all your views to rotate freely
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return AppDelegate.orientationLock
+    }
+}
+
 struct ContentView: View {
     
     @State var player = AVPlayer(url: URL(string: "https://filmoment.ru/web/loads/video/beekeeper.mp4")!)
@@ -20,30 +29,32 @@ struct ContentView: View {
     var body: some View {
         GeometryReader{ geo in
             VStack {
-                if !self.isFullScreen { // Если не в полноэкранном режиме, показываем плеер
-                    ZStack{
-                        VideoPlayer(player: $player)
-                        
-                        if self.showControls {
-                            Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullScreen: self.$isFullScreen)
-                        }
+                ZStack{
+                    VideoPlayer(player: $player)
+                    
+                    if self.showControls {
+                        Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullScreen: self.$isFullScreen)
                     }
-                    .frame(height: UIScreen.main.bounds.height / 3)
-                    .onTapGesture {
-                        self.showControls = true
-                    }
-                } else { // Если в полноэкранном режиме, показываем плеер на весь экран
-                    FullScreenPlayerView(player: $player, isPlaying: $isPlaying, showControls: $showControls, value: $value, isFullScreen: $isFullScreen)
                 }
-                
-                
+                .frame(height: UIScreen.main.bounds.height / 3)
+                .onTapGesture {
+                    self.showControls = true
+                }
                 Spacer()
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
+            .fullScreenCover(isPresented: $isFullScreen, content: {
+                FullScreenPlayerView(player: self.$player, isPlaying: self.$isPlaying, showControls: self.$showControls, value: self.$value, isFullScreen: self.$isFullScreen)
+            })
             .onAppear {
-                self.player.play()
-                self.isPlaying = true
+                //                AppDelegate.orientationLock = .portrait
+                self.player.pause()
+                self.isPlaying = false
             }
+            .onChange(of: isFullScreen, { oldValue, newValue in
+                AppDelegate.orientationLock = newValue ? .all : .portrait
+            })
+            
         }
     }
 }
@@ -61,6 +72,9 @@ struct FullScreenPlayerView: View {
         VStack {
             ZStack{
                 VideoPlayer(player: $player)
+                    .onTapGesture {
+                        showControls = true
+                    }
                 
                 if self.showControls {
                     Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullScreen: self.$isFullScreen)
@@ -68,10 +82,9 @@ struct FullScreenPlayerView: View {
                 
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onTapGesture {
-            self.showControls = true
-        }
+//        .frame(width: .infinity, height: UIScreen.main.bounds.height)
+        .edgesIgnoringSafeArea([.bottom, .top])
+        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 }
 
@@ -86,21 +99,16 @@ struct Controls: View {
     var body: some View {
         VStack{
             HStack {
-                
-                if UIDevice.current.orientation.isLandscape||UIDevice.current.orientation.isFlat {
-                    
-                } else {
-                    Button(action: {
-                        // Тогглим полноэкранный режим
-                        self.isFullScreen.toggle()
-                    }) {
-                        Image(systemName: self.isFullScreen ? "arrow.down.left.and.arrow.up.right" : "arrow.up.left.and.arrow.down.right") // Меняем иконку кнопки в зависимости от режима
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding(20)
-                    }
+                Button(action: {
+                    // Тогглим полноэкранный режим
+                    self.isFullScreen.toggle()
+                }) {
+                    Image(systemName: self.isFullScreen ? "arrow.down.left.and.arrow.up.right" : "arrow.up.left.and.arrow.down.right") // Меняем иконку кнопки в зависимости от режима
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .padding(20)
                 }
-
+                
                 Spacer()
             }
             Spacer()
@@ -109,7 +117,7 @@ struct Controls: View {
                     self.player.seek(to: CMTime(seconds: self.getSeconds() - 10, preferredTimescale: 1))
                     
                 } label: {
-                    Image(systemName: "backward.fill")
+                    Image(systemName: "gobackward.10")
                         .font(.title)
                         .foregroundStyle(.white)
                         .padding(20)
@@ -135,7 +143,7 @@ struct Controls: View {
                     self.player.seek(to: CMTime(seconds: self.getSeconds() + 10, preferredTimescale: 1))
                     
                 } label: {
-                    Image(systemName: "forward.fill")
+                    Image(systemName: "goforward.10")
                         .font(.title)
                         .foregroundStyle(.white)
                         .padding(20)
@@ -229,7 +237,7 @@ struct VideoPlayer: UIViewControllerRepresentable {
         let controller = AVPlayerViewController()
         controller.player = player
         controller.showsPlaybackControls = false
-        controller.videoGravity = .resize
+        controller.videoGravity = .resizeAspect
         
         return controller
     }
