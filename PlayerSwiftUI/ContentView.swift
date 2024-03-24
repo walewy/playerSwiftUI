@@ -15,24 +15,27 @@ struct ContentView: View {
     @State var isPlaying = false
     @State var showControls = false
     @State var value: Float = 0
-    @State var isFullscreen = false
+    @State var isFullScreen = false // Добавляем состояние для отслеживания полноэкранного режима
     
     var body: some View {
         GeometryReader{ geo in
             VStack {
-                ZStack{
-                    VideoPlayer(player: $player)
-                    
-                    if self.showControls {
-                        Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullscreen: self.$isFullscreen)
+                if !self.isFullScreen { // Если не в полноэкранном режиме, показываем плеер
+                    ZStack{
+                        VideoPlayer(player: $player)
+                        
+                        if self.showControls {
+                            Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullScreen: self.$isFullScreen)
+                        }
                     }
-                    
+                    .frame(height: UIScreen.main.bounds.height / 3)
+                    .onTapGesture {
+                        self.showControls = true
+                    }
+                } else { // Если в полноэкранном режиме, показываем плеер на весь экран
+                    FullScreenPlayerView(player: $player, isPlaying: $isPlaying, showControls: $showControls, value: $value, isFullScreen: $isFullScreen)
                 }
-                .frame(height: self.isFullscreen ? geo.size.height : (UIDevice.current.orientation.isLandscape ? geo.size.height : geo.size.height / 3))
-//                .frame(height: UIDevice.current.orientation.isLandscape ? geo.size.height : geo.size.height / 3)
-                .onTapGesture {
-                    self.showControls = true
-                }
+                
                 
                 Spacer()
             }
@@ -41,11 +44,33 @@ struct ContentView: View {
                 self.player.play()
                 self.isPlaying = true
             }
-            .gesture(DragGesture().onEnded({ gesture in
-                if abs(gesture.translation.width) > 100 {
-                    self.isFullscreen.toggle()
+        }
+    }
+}
+
+
+struct FullScreenPlayerView: View {
+    
+    @Binding var player: AVPlayer
+    @Binding var isPlaying: Bool
+    @Binding var showControls: Bool
+    @Binding var value: Float
+    @Binding var isFullScreen: Bool
+    
+    var body: some View {
+        VStack {
+            ZStack{
+                VideoPlayer(player: $player)
+                
+                if self.showControls {
+                    Controls(player: self.$player, isPlaying: self.$isPlaying, pannel: self.$showControls, value: self.$value, isFullScreen: self.$isFullScreen)
                 }
-            }))
+                
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onTapGesture {
+            self.showControls = true
         }
     }
 }
@@ -56,25 +81,31 @@ struct Controls: View {
     @Binding var isPlaying: Bool
     @Binding var pannel: Bool
     @Binding var value: Float
-    @Binding var isFullscreen: Bool
+    @Binding var isFullScreen: Bool
     
     var body: some View {
         VStack{
             HStack {
-                Button {
-                    isFullscreen.toggle()
-                } label: {
-                    Image(systemName: isFullscreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
-                        .font(.title)
-                        .foregroundStyle(.white)
-                        .padding(20)
+                
+                if UIDevice.current.orientation.isLandscape||UIDevice.current.orientation.isFlat {
+                    
+                } else {
+                    Button(action: {
+                        // Тогглим полноэкранный режим
+                        self.isFullScreen.toggle()
+                    }) {
+                        Image(systemName: self.isFullScreen ? "arrow.down.left.and.arrow.up.right" : "arrow.up.left.and.arrow.down.right") // Меняем иконку кнопки в зависимости от режима
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .padding(20)
+                    }
                 }
+
                 Spacer()
             }
             Spacer()
             HStack{
                 Button {
-                    
                     self.player.seek(to: CMTime(seconds: self.getSeconds() - 10, preferredTimescale: 1))
                     
                 } label: {
@@ -101,7 +132,6 @@ struct Controls: View {
                 }
                 Spacer()
                 Button {
-                    
                     self.player.seek(to: CMTime(seconds: self.getSeconds() + 10, preferredTimescale: 1))
                     
                 } label: {
@@ -140,7 +170,6 @@ struct Controls: View {
         return Double(Double(self.value) * (self.player.currentItem?.duration.seconds)!)
     }
 }
-
 
 
 struct CustomProgressBar: UIViewRepresentable{
@@ -201,6 +230,7 @@ struct VideoPlayer: UIViewControllerRepresentable {
         controller.player = player
         controller.showsPlaybackControls = false
         controller.videoGravity = .resize
+        
         return controller
     }
     
@@ -209,6 +239,4 @@ struct VideoPlayer: UIViewControllerRepresentable {
     }
 }
 
-#Preview {
-    ContentView()
-}
+
