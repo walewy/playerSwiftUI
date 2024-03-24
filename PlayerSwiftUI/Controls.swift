@@ -35,7 +35,7 @@ struct Controls: View {
                     
                 } label: {
                     Image(systemName: "gobackward.10")
-                        .font(.title)
+                        .font(.title2)
                         .foregroundStyle(.white)
                         .padding(20)
                 }
@@ -61,14 +61,23 @@ struct Controls: View {
                     
                 } label: {
                     Image(systemName: "goforward.10")
-                        .font(.title)
+                        .font(.title2)
                         .foregroundStyle(.white)
                         .padding(20)
                 }
             }
             Spacer()
             
-            CustomProgressBar(viewModel: viewModel)
+            HStack{
+                Text("\(viewModel.getTimeString(from: viewModel.player.currentTime()))")
+                    .foregroundColor(.white)
+                
+                CustomProgressBar(viewModel: viewModel)
+                
+                Text("\(Int(viewModel.getTimeString(from: viewModel.player.currentItem?.duration ?? CMTime.zero))! - Int(viewModel.getTimeString(from: viewModel.player.currentTime()))!)")
+                    .foregroundColor(.white)
+                
+            }
             
         }
         .padding()
